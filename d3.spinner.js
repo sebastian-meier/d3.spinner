@@ -1,120 +1,95 @@
-(function() {
-  /**
-  * d3 spinner widget
-  * @param (object) args
-  * @returns spinner object
-  */
-  d3.spinner = function(args){
-
-    var self = this;
-
-    //active bar id
-    this.current = 0;
-
-    //array for saving the individual steps
-    this.stepsData = [];
-
-    //basic d3 line function
-    this.lineFunction = d3.svg.line().x(function(d) { return d.x; }).y(function(d) { return d.y; }).interpolate("linear");
-
-    this.initialize = function(args){
-
-      if (!args) throw "d3.spinner needs at least a reference to an element||svg||g";
-      if (!args.element && !args.svg && !args.g) throw "d3.spinner needs a reference to an element||svg||g";
-
-      //Default Element
-      this.defaults = {
-        //height of the container for the spinner
-        height : 50,
-        //width of the container for the spinner
-        width : 50,
-        //number of strokes
-        steps : 15,
-        //ratio of the inner circle to the outer circle
-        inner_radius : 0.7,
-        //show tail or not
-        tail : true,
-        //Interval Time
-        time : 100,
-        //Container
-        element : false,
-        //If you already have an svg
-        svg: false,
-        //Or if you have a container inside an svg
-        g: false,
-        //radius of the spinner
-        radius : 0,
-        //base css class
-        cls : 'spinner-step'
-      };
-
-      //Merge the initial option provided by the user with the default parameters
-      this.config = d3.tools.extend( this.defaults , args );
-
-      //Fitting the spinner into the width / height container
-      this.config.radius = this.config.height > this.config.width ? this.config.width : this.config.height;
-
-      this.render();
-
-      this.interval = setInterval(function(){ self.update(); }, this.config.time);
-    };
-
-    this.render = function(){
-      //the svg container
-      if(!this.config.svg && !this.config.g){
-        this.svg = this.config.element.append("svg")
-          .attr("width", this.config.width)
-          .attr("height", this.config.height);
-        this.g = this.svg.append("g").attr("class", "spinner");
-      }else if(!this.config.g){
-        this.g = this.config.svg.append("g").attr("class", "spinner");
-      }else{
-        this.g = this.config.g;
-        d3.tools.addClass(this.g, "spinner");
-      }
-
-      var stepSize = (360/(this.config.steps*2))/180 * Math.PI;
-
-      for(var i = 0; i<this.config.steps; i++){
-        var stepData = [  { "x": this.config.width/2 + d3.tools.polarToCartesian(stepSize*(i*2), this.config.radius/2*this.config.inner_radius)[0],     "y": this.config.height/2 + d3.tools.polarToCartesian(stepSize*(i*2), this.config.radius/2*this.config.inner_radius)[1]},
-                          { "x": this.config.width/2 + d3.tools.polarToCartesian(stepSize*(i*2), this.config.radius/2)[0],                              "y": this.config.height/2 + d3.tools.polarToCartesian(stepSize*(i*2), this.config.radius/2)[1]},
-                          { "x": this.config.width/2 + d3.tools.polarToCartesian(stepSize*(i*2+1), this.config.radius/2)[0],                            "y": this.config.height/2 + d3.tools.polarToCartesian(stepSize*(i*2+1), this.config.radius/2)[1]},
-                          { "x": this.config.width/2 + d3.tools.polarToCartesian(stepSize*(i*2+1), this.config.radius/2*this.config.inner_radius)[0],   "y": this.config.height/2 + d3.tools.polarToCartesian(stepSize*(i*2+1), this.config.radius/2*this.config.inner_radius)[1]},
-                          { "x": this.config.width/2 + d3.tools.polarToCartesian(stepSize*(i*2), this.config.radius/2*this.config.inner_radius)[0],     "y": this.config.height/2 + d3.tools.polarToCartesian(stepSize*(i*2), this.config.radius/2*this.config.inner_radius)[1]}
-        ];
-        this.stepsData[i] = this.g.append("path").attr("id", "step_"+i).attr("class", this.config.cls).attr("d", this.lineFunction(stepData));
-      }
-    };
-
-    this.update = function(){
-      for(var i = 0; i<this.config.steps; i++){
-        if(i != this.current){
-          d3.select('#step_'+i).attr('class', this.config.cls);
-        }else{
-          d3.tools.addClass(d3.select('#step_'+i), 'active');
-        }
-      }
-
-      if(this.config.tail){
-        for(var i = 1; i<5; i++){
-          var ii = this.current - i;
-          if(ii < 0 ){
-            ii += this.config.steps;
-          }
-          d3.tools.addClass(d3.select('#step_'+ii), 'active-'+i);
-        }
-      }
-
-      this.current++;
-      if(this.current >= this.config.steps){
-        this.current = 0;
-      }
-    };
-
-    this.destroy = function(){
-      clearInterval(this.interval);
-    };
-
-    this.initialize(args);
+function spinner(args) {
+  //Default Element
+  var defaults = {
+    //height of the container for the spinner
+    height : 50,
+    //width of the container for the spinner
+    width : 50,
+    //number of strokes
+    steps : 15,
+    //ratio of the inner circle to the outer circle
+    inner_radius : 0.7,
+    //show tail or not
+    tail : true,
+    //Interval Time
+    time : 100,
+    //radius of the spinner
+    radius : 50,
+    //base css class
+    cls : 'spinner-step'
   };
-})();
+
+  //Merge the initial option provided by the user with the default parameters
+  var config = d3.tools.extend( defaults , args ),
+
+  //Radians size of each step
+  stepSize = (360/(config.steps*2))/180 * Math.PI,
+
+  //basic d3 line function
+  lineFunction = d3.svg.line().x(function(d) { return d.x; }).y(function(d) { return d.y; }).interpolate("linear");
+
+  //Fitting the spinner into the width / height container
+  config.radius = config.height > config.width ? config.width : config.height;
+
+  var mySelection;
+
+  function my(selection) {
+    console.log(selection);
+    mySelection = selection;
+    selection.each(function(d, i) {
+      var g = d3.select(this).append("g").attr("class", "spinner").attr("current", 0);
+
+      //Drawing the steps
+      for(var i = 0; i<config.steps; i++){
+        var stepData = [  { "x": config.width/2 + d3.tools.polarToCartesian(stepSize*(i*2), config.radius/2*config.inner_radius)[0],     "y": config.height/2 + d3.tools.polarToCartesian(stepSize*(i*2), config.radius/2*config.inner_radius)[1]},
+                          { "x": config.width/2 + d3.tools.polarToCartesian(stepSize*(i*2), config.radius/2)[0],                              "y": config.height/2 + d3.tools.polarToCartesian(stepSize*(i*2), config.radius/2)[1]},
+                          { "x": config.width/2 + d3.tools.polarToCartesian(stepSize*(i*2+1), config.radius/2)[0],                            "y": config.height/2 + d3.tools.polarToCartesian(stepSize*(i*2+1), config.radius/2)[1]},
+                          { "x": config.width/2 + d3.tools.polarToCartesian(stepSize*(i*2+1), config.radius/2*config.inner_radius)[0],   "y": config.height/2 + d3.tools.polarToCartesian(stepSize*(i*2+1), config.radius/2*config.inner_radius)[1]},
+                          { "x": config.width/2 + d3.tools.polarToCartesian(stepSize*(i*2), config.radius/2*config.inner_radius)[0],     "y": config.height/2 + d3.tools.polarToCartesian(stepSize*(i*2), config.radius/2*config.inner_radius)[1]}
+        ];
+        g.append("path").attr("class", config.cls+" step_"+i).attr("d", lineFunction(stepData));
+      }
+      
+    });
+
+    //Starting the animation
+    interval = setInterval(function(){ my.update(); }, config.time);
+  }
+
+  my.update = function(){
+    mySelection.each(function(d, i){
+      var self = d3.select(this);
+      var current = self.select(".spinner").attr("current");
+      for(var i = 0; i<config.steps; i++){
+        if(i != current){
+          self.select('.step_'+i).attr('class', config.cls+" step_"+i);
+        }else{
+          d3.tools.addClass(self.select('.step_'+i), 'active');
+        }
+      }
+
+      if(config.tail){
+        for(var i = 1; i<5; i++){
+          var ii = current - i;
+          if(ii < 0 ){
+            ii += config.steps;
+          }
+          d3.tools.addClass(self.select('.step_'+ii), 'active-'+i);
+        }
+      }
+
+      current++;
+      if(current >= config.steps){
+        current = 0;
+      }
+
+      self.select(".spinner").attr("current", current);
+    });
+  }
+
+  my.destroy = function(){
+    clearInterval(interval);
+  }
+
+  return my;
+}
