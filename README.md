@@ -8,7 +8,7 @@ d3.spinner
 ## Usage
 
 ```
-d3.spinner({
+var mySpinner = spinner({
 	//height of the container for the spinner
     height : 50,
     //width of the container for the spinner
@@ -21,13 +21,16 @@ d3.spinner({
     tail : true,
     //Interval Time
     time : 100,
-    //Container e.g. d3.select("body")
-    element : false,
     //radius of the spinner, this is set automatically through width and height
     radius : 0,
     //base css class, if you change this, you also need to change the css classes
     cls : 'spinner-step'
 });
+
+d3.select('body').append("svg").attr("class", "spinContainer");
+
+d3.selectAll('.spinContainer').call(mySpinner);
+
 ```
 
 For more information checkout the example
