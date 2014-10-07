@@ -11,7 +11,9 @@
 	<script src="../lib/d3.tools.min.js"></script>
 	<script src="../d3.spinner.js"></script>
 	<script>
-	    d3.spinner({ width:50, height:50, element: d3.select('body') });
+	    //d3.spinner({ width:50, height:50, element: d3.select('body') });
+		//d3.spinner({ width:50, height:50, svg: d3.select('body').append("svg") });
+		d3.spinner({ width:50, height:50, g: d3.select('body').append("svg").append("g") });
 	</script>
 </body>
 </html>
