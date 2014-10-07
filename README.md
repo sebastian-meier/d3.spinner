@@ -1,5 +1,5 @@
 d3.spinner
 ==========
 
-![Example Spinner](https://octodex.github.com/images/yaktocat.png)
+![Example Spinner](https://raw.githubusercontent.com/sebastian-meier/d3.spinner/master/thumbnail.png)
 Loading Spinner for d3 projects
