@@ -1,0 +1,14 @@
+/* Default Style of the preloader bars */
+.spinner-step{
+	fill: rgba(0,0,0,0.3);
+	stroke: none;
+
+	/* Style for the active bar */
+	&.active{ fill: rgba(0,0,0,1); }
+
+	/* If activated this is the tail of the active bar */
+	&.active-1{ fill: rgba(0,0,0,0.9); }
+	&.active-2{ fill: rgba(0,0,0,0.75); }
+	&.active-3{ fill: rgba(0,0,0,0.6); }
+	&.active-4{ fill: rgba(0,0,0,0.45); }
+}
