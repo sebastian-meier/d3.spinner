@@ -63,14 +63,14 @@
       //the svg container
       if(!this.config.svg && !this.config.g){
         this.svg = this.config.element.append("svg")
-          .attr("class", "spinner")
           .attr("width", this.config.width)
           .attr("height", this.config.height);
-        this.g = this.svg.append("g");
+        this.g = this.svg.append("g").attr("class", "spinner");
       }else if(!this.config.g){
-        this.g = this.config.svg.append("g");
+        this.g = this.config.svg.append("g").attr("class", "spinner");
       }else{
         this.g = this.config.g;
+        d3.tools.addClass(this.g, "spinner");
       }
 
       var stepSize = (360/(this.config.steps*2))/180 * Math.PI;
