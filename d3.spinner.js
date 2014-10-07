@@ -38,6 +38,10 @@
         time : 100,
         //Container
         element : false,
+        //If you already have an svg
+        svg: false,
+        //Or if you have a container inside an svg
+        g: false,
         //radius of the spinner
         radius : 0,
         //base css class
@@ -57,10 +61,17 @@
 
     this.render = function(){
       //the svg container
-      this.svg = this.config.element.append("svg")
-        .attr("class", "spinner")
-        .attr("width", this.config.width)
-        .attr("height", this.config.height);
+      if(!this.config.svg && !this.config.g){
+        this.svg = this.config.element.append("svg")
+          .attr("class", "spinner")
+          .attr("width", this.config.width)
+          .attr("height", this.config.height);
+        this.g = this.svg.append("g");
+      }else if(!this.config.g){
+        this.g = this.config.svg.append("g");
+      }else{
+        this.g = this.config.g;
+      }
 
       var stepSize = (360/(this.config.steps*2))/180 * Math.PI;
 
@@ -71,7 +82,7 @@
                           { "x": this.config.width/2 + d3.tools.polarToCartesian(stepSize*(i*2+1), this.config.radius/2*this.config.inner_radius)[0],   "y": this.config.height/2 + d3.tools.polarToCartesian(stepSize*(i*2+1), this.config.radius/2*this.config.inner_radius)[1]},
                           { "x": this.config.width/2 + d3.tools.polarToCartesian(stepSize*(i*2), this.config.radius/2*this.config.inner_radius)[0],     "y": this.config.height/2 + d3.tools.polarToCartesian(stepSize*(i*2), this.config.radius/2*this.config.inner_radius)[1]}
         ];
-        this.stepsData[i] = this.svg.append("path").attr("id", "step_"+i).attr("class", this.config.cls).attr("d", this.lineFunction(stepData));
+        this.stepsData[i] = this.g.append("path").attr("id", "step_"+i).attr("class", this.config.cls).attr("d", this.lineFunction(stepData));
       }
     };
 
