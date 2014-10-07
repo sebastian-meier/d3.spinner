@@ -19,8 +19,8 @@
 
     this.initialize = function(args){
 
-      if (!args) throw "d3.spinner needs at least a reference to an element";
-      if (!args.element) throw "d3.spinner needs a reference to an element";
+      if (!args) throw "d3.spinner needs at least a reference to an element||svg||g";
+      if (!args.element && !args.svg && !args.g) throw "d3.spinner needs a reference to an element||svg||g";
 
       //Default Element
       this.defaults = {
