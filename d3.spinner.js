@@ -34,7 +34,6 @@ function spinner(args) {
   var mySelection;
 
   function my(selection) {
-    console.log(selection);
     mySelection = selection;
     selection.each(function(d, i) {
       var g = d3.select(this).append("g").attr("class", "spinner").attr("current", 0);
